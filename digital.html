@@ -1,0 +1,1457 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Agenda Archive 2026–2027</title>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500&display=swap" rel="stylesheet" />
+  <style>
+    /* variables de couleur — modifier ici */
+    :root {
+      --bg: #ffffff;
+      --tab-off: #cccccc;
+      --tab-on: #ffffff;
+      --text: #111111;
+      --text-mid: #888888;
+      --text-light: #bbbbbb;
+      --line: #cccccc;
+      --page: #e4e4e4;
+      --font: 'Outfit', sans-serif;
+      --line-style: dotted;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: var(--page);
+      font-family: var(--font);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 1.5rem 1rem 3rem;
+      gap: 0;
+    }
+
+    /* ── header ── */
+    .app-header {
+      background: var(--bg);
+      border-bottom: 1px solid var(--line);
+      padding: 0 24px;
+      height: 44px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      width: 100%;
+      max-width: 920px;
+      border-radius: 10px 10px 0 0;
+    }
+
+    .app-title {
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text);
+      letter-spacing: .5px;
+    }
+
+    .app-sub {
+      font-size: 10px;
+      color: var(--text-mid);
+      text-transform: uppercase;
+      letter-spacing: .08em;
+      margin-left: 10px;
+    }
+
+    .header-right {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    /* boutons changement vue */
+    .view-switch {
+      display: flex;
+      gap: 3px;
+      background: var(--page);
+      border-radius: 7px;
+      padding: 3px;
+    }
+
+    .vsw-btn {
+      background: none;
+      border: none;
+      border-radius: 5px;
+      padding: 5px 12px;
+      font-size: 10px;
+      font-family: var(--font);
+      color: var(--text-mid);
+      cursor: pointer;
+      text-transform: uppercase;
+      letter-spacing: .07em;
+    }
+
+    .vsw-btn.on {
+      background: var(--bg);
+      color: var(--text);
+    }
+
+    /* boutons barre outils */
+    .tbtn {
+      background: none;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      padding: 5px 12px;
+      font-size: 10px;
+      font-family: var(--font);
+      color: var(--text-mid);
+      cursor: pointer;
+      text-transform: uppercase;
+      letter-spacing: .06em;
+    }
+
+    .tbtn:hover { background: var(--page); }
+
+    .tbtn.dark {
+      background: var(--text);
+      color: var(--bg);
+      border-color: var(--text);
+    }
+
+    .tbtn.dark:hover { opacity: .85; }
+
+    /* barre réglages couleur/police */
+    .settings-bar {
+      background: var(--bg);
+      border-bottom: 1px solid var(--line);
+      padding: 6px 24px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+      width: 100%;
+      max-width: 920px;
+    }
+
+    .sg {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .sg label {
+      font-size: 9.5px;
+      color: var(--text-mid);
+      text-transform: uppercase;
+      letter-spacing: .06em;
+    }
+
+    .sg input[type=color] {
+      width: 22px;
+      height: 22px;
+      border: 1px solid var(--line);
+      border-radius: 4px;
+      cursor: pointer;
+      padding: 0;
+    }
+
+    .sg select {
+      font-size: 10px;
+      border: 1px solid var(--line);
+      border-radius: 5px;
+      padding: 3px 7px;
+      background: var(--bg);
+      font-family: var(--font);
+      color: var(--text);
+      cursor: pointer;
+    }
+
+    .sg-sep {
+      width: 1px;
+      height: 16px;
+      background: var(--line);
+    }
+
+    /* ── principal layout ── */
+    .app-body {
+      width: 100%;
+      max-width: 920px;
+      display: flex;
+    }
+
+    /* ── calendrier 뷰 ── */
+    .cal-view {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* onglets */
+    .tabs-row {
+      display: flex;
+      align-items: flex-end;
+      padding: 10px 0 0;
+      gap: 2px;
+    }
+
+    .tab-item {
+      flex: 1;
+      height: 28px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 9.5px;
+      font-family: var(--font);
+      font-weight: 400;
+      letter-spacing: .07em;
+      text-transform: uppercase;
+      color: var(--text-mid);
+      cursor: pointer;
+      background: var(--tab-off);
+      border-radius: 7px 7px 0 0;
+      border: none;
+      transition: background .1s;
+      user-select: none;
+      white-space: nowrap;
+    }
+
+    .tab-item.on {
+      background: var(--tab-on);
+      color: var(--text);
+      font-weight: 500;
+      z-index: 2;
+    }
+
+    .tab-item:hover:not(.on) { filter: brightness(.94); }
+
+    /* carte calendrier */
+    .cal-card {
+      background: var(--bg);
+      margin: 0;
+      border-radius: 0 0 10px 10px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .cal-inner {
+      padding: 18px 28px 24px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* navigation haut calendrier */
+    .cal-nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 4px;
+      flex-shrink: 0;
+    }
+
+    .cal-nav button {
+      background: none;
+      border: none;
+      font-size: 14px;
+      color: var(--text-mid);
+      cursor: pointer;
+      padding: 2px 6px;
+      font-family: var(--font);
+    }
+
+    .cal-nav button:hover { color: var(--text); }
+
+    .cal-nav-label {
+      font-size: 10px;
+      color: var(--text-mid);
+      text-transform: uppercase;
+      letter-spacing: .1em;
+    }
+
+    /* grand numéro du mois */
+    .cal-num-wrap {
+      position: relative;
+      border-bottom: 1px var(--line-style) var(--line);
+      padding-bottom: 10px;
+      margin-bottom: 0;
+      flex-shrink: 0;
+    }
+
+    .cal-num {
+      font-size: 76px;
+      font-weight: 300;
+      color: var(--text);
+      line-height: 1;
+      letter-spacing: -3px;
+      display: inline-block;
+    }
+
+    .cal-year {
+      position: absolute;
+      bottom: 14px;
+      left: 168px;
+      font-size: 12px;
+      font-weight: 300;
+      color: var(--text-mid);
+    }
+
+    /* en-têtes jours */
+    .day-headers {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      padding: 7px 0 5px;
+      flex-shrink: 0;
+    }
+
+    .dh {
+      font-size: 9px;
+      text-align: center;
+      color: var(--text-mid);
+      text-transform: uppercase;
+      letter-spacing: .07em;
+    }
+
+    /* grille dates */
+    .date-grid {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+    }
+
+    .dc {
+      border-top: 1px var(--line-style) var(--line);
+      border-right: 1px solid var(--line);
+      padding: 5px 6px 4px;
+      cursor: pointer;
+      transition: background .1s;
+      position: relative;
+      min-height: 80px;
+    }
+
+    .dc:nth-child(7n) { border-right: none; }
+    .dc:hover { background: rgba(0,0,0,.03); }
+    .dc.empty { cursor: default; }
+    .dc.empty:hover { background: none; }
+
+    .dc-num {
+      font-size: 11px;
+      color: var(--text);
+      line-height: 1.2;
+    }
+
+    .dc-dash {
+      font-size: 11px;
+      color: var(--text-light);
+      margin-left: 1px;
+    }
+
+    .dc-thumbs {
+      display: flex;
+      gap: 2px;
+      flex-wrap: wrap;
+      margin-top: 4px;
+    }
+
+    .dc-thumbs img {
+      width: 28px;
+      height: 28px;
+      object-fit: cover;
+      border-radius: 3px;
+    }
+
+    /* 사진 1장이면 더 크게 */
+    .dc-thumbs.single img {
+      width: 44px;
+      height: 44px;
+      border-radius: 4px;
+    }
+
+    .dc.has-data::after {
+      content: '';
+      position: absolute;
+      bottom: 3px;
+      right: 4px;
+      width: 3px;
+      height: 3px;
+      border-radius: 50%;
+      background: var(--text-mid);
+    }
+
+    .dc.drag-over {
+      background: rgba(0,0,0,.06) !important;
+      outline: 2px dashed var(--text-mid);
+    }
+
+    .grid-end {
+      grid-column: 1/-1;
+      border-top: 1px var(--line-style) var(--line);
+      height: 0;
+    }
+
+    /* ── galerie 뷰 ── */
+    .gallery-view {
+      flex: 1;
+      display: none;
+      flex-direction: column;
+    }
+
+    .gallery-view.on { display: flex; }
+
+    .gallery-tabs {
+      display: flex;
+      align-items: flex-end;
+      padding: 10px 0 0;
+      gap: 2px;
+    }
+
+    .gallery-card {
+      background: var(--bg);
+      margin: 0;
+      border-radius: 0 0 10px 10px;
+      display: flex;
+      flex-direction: column;
+      min-height: 480px;
+    }
+
+    .gallery-toolbar {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 12px 20px;
+      border-bottom: 1px solid var(--line);
+      flex-shrink: 0;
+    }
+
+    .gallery-label {
+      font-size: 11px;
+      color: var(--text-mid);
+      text-transform: uppercase;
+      letter-spacing: .1em;
+      flex: 1;
+    }
+
+    .photo-count {
+      font-size: 10px;
+      color: var(--text-light);
+    }
+
+    .gview-btns {
+      display: flex;
+      gap: 3px;
+    }
+
+    .gvbtn {
+      background: none;
+      border: 1px solid var(--line);
+      border-radius: 5px;
+      width: 26px;
+      height: 26px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--text-mid);
+    }
+
+    .gvbtn.on {
+      background: var(--text);
+      color: var(--bg);
+      border-color: var(--text);
+    }
+
+    /* grille photos */
+    .gallery-grid {
+      padding: 12px 20px 20px;
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 3px;
+      align-content: start;
+    }
+
+    .gallery-grid.list-view {
+      grid-template-columns: 1fr;
+      gap: 1px;
+    }
+
+    .photo-card {
+      position: relative;
+      aspect-ratio: 1;
+      background: var(--page);
+      overflow: hidden;
+      cursor: pointer;
+    }
+
+    .photo-card img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .photo-card:hover img { opacity: .88; }
+
+    .photo-card .pc-overlay {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      padding: 6px;
+      opacity: 0;
+      transition: opacity .15s;
+      background: rgba(0,0,0,.15);
+    }
+
+    .photo-card:hover .pc-overlay { opacity: 1; }
+
+    .photo-card .pc-date {
+      font-size: 9px;
+      color: #fff;
+    }
+
+    .photo-card .pc-del {
+      position: absolute;
+      top: 4px;
+      right: 4px;
+      background: rgba(0,0,0,.5);
+      border: none;
+      color: #fff;
+      border-radius: 50%;
+      width: 18px;
+      height: 18px;
+      font-size: 10px;
+      cursor: pointer;
+      display: none;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .photo-card:hover .pc-del { display: flex; }
+
+    /* vue liste */
+    .gallery-grid.list-view .photo-card {
+      aspect-ratio: unset;
+      height: 60px;
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      gap: 10px;
+      padding: 0 10px;
+      background: #fafafa;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .gallery-grid.list-view .photo-card img {
+      width: 44px;
+      height: 44px;
+      border-radius: 4px;
+      flex-shrink: 0;
+    }
+
+    .gallery-grid.list-view .photo-card .pc-overlay { display: none; }
+    .list-info { flex: 1; min-width: 0; }
+    .list-date { font-size: 10px; color: var(--text-mid); }
+    .list-note { font-size: 11px; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+    .empty-gallery {
+      grid-column: 1/-1;
+      text-align: center;
+      padding: 60px;
+      color: var(--text-light);
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: .08em;
+    }
+
+    /* overlay drag & drop */
+    .drop-overlay {
+      display: none;
+      position: absolute;
+      inset: 0;
+      background: rgba(255,255,255,.9);
+      border: 2px dashed var(--text-mid);
+      border-radius: 8px;
+      z-index: 10;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      color: var(--text-mid);
+      text-transform: uppercase;
+      letter-spacing: .08em;
+      pointer-events: none;
+    }
+
+    /* ── popup ── */
+    .popup-bg {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,.45);
+      z-index: 200;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem;
+    }
+
+    .popup-bg.open { display: flex; }
+
+    .popup-box {
+      background: #fff;
+      border-radius: 12px;
+      width: 100%;
+      max-width: 520px;
+      overflow: hidden;
+    }
+
+    .popup-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 18px;
+      border-bottom: 1px solid var(--line);
+      background: var(--bg);
+    }
+
+    .popup-title {
+      font-size: 14px;
+      color: var(--text);
+      font-weight: 400;
+    }
+
+    .popup-close {
+      background: none;
+      border: none;
+      font-size: 20px;
+      cursor: pointer;
+      color: var(--text-mid);
+      line-height: 1;
+    }
+
+    .popup-body { padding: 16px 18px; }
+
+    .popup-img-wrap {
+      background: var(--page);
+      border-radius: 6px;
+      overflow: hidden;
+      margin-bottom: 12px;
+    }
+
+    .popup-img-wrap img {
+      width: 100%;
+      max-height: 320px;
+      object-fit: contain;
+      display: block;
+    }
+
+    .popup-drop {
+      border: 1.5px dashed var(--line);
+      border-radius: 8px;
+      padding: 28px;
+      text-align: center;
+      color: var(--text-light);
+      font-size: 11px;
+      cursor: pointer;
+      margin-bottom: 12px;
+      text-transform: uppercase;
+      letter-spacing: .06em;
+      transition: background .1s;
+    }
+
+    .popup-drop:hover { background: var(--page); }
+    .popup-drop.drag-over { background: var(--page); border-color: var(--text-mid); }
+
+    .popup-photos {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-bottom: 12px;
+      max-height: 360px;
+      overflow-y: auto;
+    }
+
+    .pp-wrap {
+      display: flex;
+      gap: 10px;
+      align-items: flex-start;
+      padding: 8px;
+      background: #fafafa;
+      border-radius: 8px;
+      border: 1px solid var(--line);
+      position: relative;
+    }
+
+    .pp-wrap img {
+      width: 72px;
+      height: 72px;
+      object-fit: cover;
+      border-radius: 5px;
+      flex-shrink: 0;
+    }
+
+    .pp-note {
+      flex: 1;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      padding: 8px;
+      font-size: 12px;
+      font-family: var(--font);
+      color: var(--text);
+      background: #fff;
+      resize: none;
+      min-height: 80px;
+    }
+
+    .pp-note:focus { outline: none; border-color: var(--text-mid); }
+
+    .pp-wrap .pp-del {
+      position: absolute;
+      top: 6px;
+      right: 6px;
+      background: rgba(0,0,0,.4);
+      border: none;
+      color: #fff;
+      border-radius: 50%;
+      width: 18px;
+      height: 18px;
+      font-size: 10px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .pp-wrap:hover .pp-del { opacity: 1; }
+    .pp-wrap .pp-del { opacity: 0; transition: opacity .15s; }
+    .pp-wrap:hover .pp-del { opacity: 1; }
+
+    /* popup-note 제거됨 — 사진별 pp-note로 대체 */
+
+    .popup-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 8px;
+      margin-top: 12px;
+    }
+
+    /* notification sauvegarde */
+    .toast {
+      position: fixed;
+      bottom: 20px;
+      right: 24px;
+      background: var(--text);
+      color: var(--bg);
+      font-size: 11px;
+      font-family: var(--font);
+      padding: 8px 16px;
+      border-radius: 6px;
+      opacity: 0;
+      transition: opacity .3s;
+      pointer-events: none;
+      z-index: 300;
+      text-transform: uppercase;
+      letter-spacing: .06em;
+    }
+
+    .toast.show { opacity: 1; }
+
+    input[type=file] { display: none; }
+  </style>
+</head>
+<body>
+
+  <!-- header -->
+  <div class="app-header">
+    <div style="display:flex;align-items:baseline;">
+      <span class="app-title">Archive</span>
+      <span class="app-sub">Juin 2026 — Mai 2027</span>
+    </div>
+    <div class="header-right">
+      <div class="view-switch">
+        <button class="vsw-btn on" id="vsw-cal">Calendrier</button>
+        <button class="vsw-btn" id="vsw-gal">Galerie</button>
+      </div>
+      <div style="width:1px;height:16px;background:var(--line);"></div>
+      <button class="tbtn" id="btn-export">Sauvegarder</button>
+      <button class="tbtn" id="btn-import">Importer</button>
+      <input type="file" id="import-input" accept=".json" />
+    </div>
+  </div>
+
+  <!-- barre de réglages -->
+  <div class="settings-bar">
+    <div class="sg">
+      <label>Fond</label>
+      <input type="color" id="c-bg" value="#ffffff" />
+    </div>
+    <div class="sg">
+      <label>Onglets</label>
+      <input type="color" id="c-tab" value="#cccccc" />
+    </div>
+    <div class="sg">
+      <label>Texte</label>
+      <input type="color" id="c-text" value="#111111" />
+    </div>
+    <div class="sg">
+      <label>Lignes</label>
+      <input type="color" id="c-line" value="#cccccc" />
+    </div>
+    <div class="sg-sep"></div>
+    <div class="sg">
+      <label>Police</label>
+      <select id="sel-font">
+        <option value="'Outfit',sans-serif" selected>Outfit</option>
+        <option value="'DM Sans',sans-serif">DM Sans</option>
+        <option value="'Nunito',sans-serif">Nunito</option>
+        <option value="Georgia,serif">Georgia</option>
+      </select>
+    </div>
+    <div class="sg">
+      <label>Style</label>
+      <select id="sel-line">
+        <option value="dotted" selected>Pointillés ···</option>
+        <option value="dashed">Tirets ---</option>
+        <option value="solid">Continue ——</option>
+      </select>
+    </div>
+    <div class="sg-sep"></div>
+    <div class="sg">
+      <button class="tbtn" id="btn-reset-design" title="Réinitialiser le design">↺ Réinitialiser</button>
+      <button class="tbtn" onclick="window.print()">Imprimer / PDF</button>
+    </div>
+  </div>
+
+  <!-- ── 앱 corps ── -->
+  <div class="app-body">
+
+    <!-- vue calendrier -->
+    <div class="cal-view" id="cal-view">
+      <div class="tabs-row" id="cal-tabs"></div>
+      <div class="cal-card">
+        <div class="cal-inner">
+          <div class="cal-nav">
+            <button id="cal-prev">←</button>
+            <span class="cal-nav-label" id="cal-label"></span>
+            <button id="cal-next">→</button>
+          </div>
+          <div class="cal-num-wrap">
+            <span class="cal-num" id="cal-num"></span>
+            <span class="cal-year" id="cal-year"></span>
+          </div>
+          <div class="day-headers" id="day-headers"></div>
+          <div class="date-grid" id="date-grid"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- vue galerie -->
+    <div class="gallery-view" id="gal-view">
+      <div class="gallery-tabs" id="gal-tabs"></div>
+      <div class="gallery-card">
+        <div class="gallery-toolbar">
+          <span class="gallery-label" id="gal-label"></span>
+          <span class="photo-count" id="gal-count"></span>
+          <button class="tbtn dark" id="btn-add-photo">+ Ajouter</button>
+          <div class="gview-btns">
+            <button class="gvbtn on" id="gvbtn-grid" title="Grille">
+              <svg width="12" height="12" viewBox="0 0 12 12" fill="currentColor">
+                <rect x="0" y="0" width="5" height="5"/><rect x="7" y="0" width="5" height="5"/>
+                <rect x="0" y="7" width="5" height="5"/><rect x="7" y="7" width="5" height="5"/>
+              </svg>
+            </button>
+            <button class="gvbtn" id="gvbtn-list" title="Liste">
+              <svg width="12" height="12" viewBox="0 0 12 12" fill="currentColor">
+                <rect x="0" y="1" width="12" height="2"/><rect x="0" y="5" width="12" height="2"/><rect x="0" y="9" width="12" height="2"/>
+              </svg>
+            </button>
+          </div>
+        </div>
+        <div class="gallery-grid" id="gal-grid"></div>
+        <input type="file" id="gal-file-input" accept="image/*" multiple />
+      </div>
+    </div>
+
+  </div>
+
+  <!-- popup date -->
+  <div class="popup-bg" id="popup-bg">
+    <div class="popup-box">
+      <div class="popup-header">
+        <span class="popup-title" id="popup-title"></span>
+        <button class="popup-close" id="popup-close">×</button>
+      </div>
+      <div class="popup-body">
+        <div class="popup-drop" id="popup-drop">
+          Glisser ou cliquer une photo
+        </div>
+        <div class="popup-photos" id="popup-photos"></div>
+        <!-- 날짜 전체 메모 제거 — 사진마다 개별 메모로 대체 -->
+        <div class="popup-actions">
+          <button class="tbtn" id="popup-cancel">Annuler</button>
+          <button class="tbtn dark" id="popup-save">Enregistrer</button>
+        </div>
+        <input type="file" id="popup-file-input" accept="image/*" multiple />
+      </div>
+    </div>
+  </div>
+
+  <!-- notification sauvegarde -->
+  <div class="toast" id="toast"></div>
+
+  <script>
+    // données des mois
+    var monthList = [
+      { year: 2026, name: 'Juin',      num: '06', firstDay: 1, totalDays: 30 },
+      { year: 2026, name: 'Juillet',   num: '07', firstDay: 3, totalDays: 31 },
+      { year: 2026, name: 'Août',      num: '08', firstDay: 6, totalDays: 31 },
+      { year: 2026, name: 'Septembre', num: '09', firstDay: 2, totalDays: 30 },
+      { year: 2026, name: 'Octobre',   num: '10', firstDay: 4, totalDays: 31 },
+      { year: 2026, name: 'Novembre',  num: '11', firstDay: 0, totalDays: 30 },
+      { year: 2026, name: 'Décembre',  num: '12', firstDay: 2, totalDays: 31 },
+      { year: 2027, name: 'Janvier',   num: '01', firstDay: 5, totalDays: 31 },
+      { year: 2027, name: 'Février',   num: '02', firstDay: 1, totalDays: 28 },
+      { year: 2027, name: 'Mars',      num: '03', firstDay: 1, totalDays: 31 },
+      { year: 2027, name: 'Avril',     num: '04', firstDay: 4, totalDays: 30 },
+      { year: 2027, name: 'Mai',       num: '05', firstDay: 6, totalDays: 31 },
+    ];
+
+    var dayNames = ['Dim', 'Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam'];
+
+    // position des onglets — différente chaque mois
+    var tabPositions = [];
+    for (var t = 0; t < 12; t++) {
+      tabPositions.push(28 + (t % 6) * 100);
+    }
+
+    // stockage des données — { "monthIdx-day": { photos:[], note:"" } }
+    var archiveData = {};
+    var currentMonthIdx = 0;
+    var currentView = 'cal'; // 'cal' or 'gal'
+    var galMonthIdx = 0;
+    var galViewMode = 'grid';
+    var openDayKey = null;
+
+    // chargement depuis localStorage
+    function loadData() {
+      try {
+        var s = localStorage.getItem('archive-2026-2027');
+        if (s) archiveData = JSON.parse(s);
+      } catch (e) {
+        archiveData = {};
+      }
+    }
+
+    // 디자인 설정 저장
+    function saveSettings() {
+      var settings = {
+        bg:    document.getElementById('c-bg').value,
+        tab:   document.getElementById('c-tab').value,
+        text:  document.getElementById('c-text').value,
+        line:  document.getElementById('c-line').value,
+        font:  document.getElementById('sel-font').value,
+        lineStyle: document.getElementById('sel-line').value,
+      };
+      localStorage.setItem('archive-settings', JSON.stringify(settings));
+    }
+
+    // 디자인 설정 불러오기
+    function loadSettings() {
+      try {
+        var s = localStorage.getItem('archive-settings');
+        if (!s) return;
+        var settings = JSON.parse(s);
+
+        if (settings.bg) {
+          document.getElementById('c-bg').value = settings.bg;
+          setVar('--bg', settings.bg);
+          setVar('--tab-on', settings.bg);
+        }
+        if (settings.tab) {
+          document.getElementById('c-tab').value = settings.tab;
+          setVar('--tab-off', settings.tab);
+        }
+        if (settings.text) {
+          document.getElementById('c-text').value = settings.text;
+          setVar('--text', settings.text);
+          setVar('--text-mid', settings.text);
+        }
+        if (settings.line) {
+          document.getElementById('c-line').value = settings.line;
+          setVar('--line', settings.line);
+          setVar('--text-light', settings.line);
+        }
+        if (settings.font) {
+          document.getElementById('sel-font').value = settings.font;
+          setVar('--font', settings.font);
+        }
+        if (settings.lineStyle) {
+          document.getElementById('sel-line').value = settings.lineStyle;
+          setVar('--line-style', settings.lineStyle);
+        }
+      } catch (e) {
+        // 설정 불러오기 실패해도 그냥 기본값 씀
+      }
+    }
+
+    // sauvegarde dans localStorage
+    function saveData() {
+      try {
+        localStorage.setItem('archive-2026-2027', JSON.stringify(archiveData));
+        showToast('Enregistré ✓');
+      } catch (e) {
+        showToast('Échec — espace insuffisant');
+      }
+    }
+
+    function showToast(msg) {
+      var t = document.getElementById('toast');
+      t.textContent = msg;
+      t.classList.add('show');
+      setTimeout(function () { t.classList.remove('show'); }, 1600);
+    }
+
+    function makeKey(monthIdx, day) {
+      return monthIdx + '-' + day;
+    }
+
+    // ── calendrier ──
+    function buildCalTabs() {
+      var nav = document.getElementById('cal-tabs');
+      nav.innerHTML = '';
+      // 12개 탭 전부 표시
+      for (var i = 0; i < 12; i++) {
+        var tab = document.createElement('button');
+        tab.className = 'tab-item' + (i === currentMonthIdx ? ' on' : '');
+        tab.textContent = monthList[i].name.toUpperCase().slice(0, 4);
+        tab.style.background = (i === currentMonthIdx)
+          ? document.getElementById('c-bg').value
+          : document.getElementById('c-tab').value;
+        tab.setAttribute('data-i', i);
+        tab.onclick = function () {
+          currentMonthIdx = parseInt(this.getAttribute('data-i'));
+          buildCalTabs();
+          drawCalendar();
+        };
+        nav.appendChild(tab);
+      }
+    }
+
+    function drawCalendar() {
+      var mo = monthList[currentMonthIdx];
+      document.getElementById('cal-num').textContent = mo.num;
+      document.getElementById('cal-year').textContent = mo.year;
+      document.getElementById('cal-label').textContent = mo.name + ' ' + mo.year;
+
+      // en-têtes des jours
+      var dhRow = document.getElementById('day-headers');
+      dhRow.innerHTML = '';
+      dayNames.forEach(function (d) {
+        var el = document.createElement('div');
+        el.className = 'dh';
+        el.textContent = d;
+        dhRow.appendChild(el);
+      });
+
+      // grille des dates
+      var grid = document.getElementById('date-grid');
+      grid.innerHTML = '';
+
+      var cells = [];
+      for (var e = 0; e < mo.firstDay; e++) cells.push(null);
+      for (var d = 1; d <= mo.totalDays; d++) cells.push(d);
+      while (cells.length % 7 !== 0) cells.push(null);
+
+      cells.forEach(function (day) {
+        var cell = document.createElement('div');
+        if (!day) {
+          cell.className = 'dc empty';
+          grid.appendChild(cell);
+          return;
+        }
+
+        var k = makeKey(currentMonthIdx, day);
+        var hasData = archiveData[k] && archiveData[k].items && archiveData[k].items.length > 0;
+        cell.className = 'dc' + (hasData ? ' has-data' : '');
+        cell.innerHTML = '<span class="dc-num">' + day + '</span><span class="dc-dash">__</span><div class="dc-thumbs"></div>';
+
+        // miniatures photos
+        if (archiveData[k] && archiveData[k].photos && archiveData[k].photos.length > 0) {
+          var thumbs = cell.querySelector('.dc-thumbs');
+          archiveData[k].photos.slice(0, 3).forEach(function (src) {
+            var img = document.createElement('img');
+            img.src = src;
+            thumbs.appendChild(img);
+          });
+        }
+
+        cell.setAttribute('data-day', day);
+        cell.setAttribute('data-midx', currentMonthIdx);
+
+        cell.addEventListener('click', function () {
+          openPopup(parseInt(this.getAttribute('data-midx')), parseInt(this.getAttribute('data-day')));
+        });
+
+        cell.addEventListener('dragover', function (e) {
+          e.preventDefault(); this.classList.add('drag-over');
+        });
+        cell.addEventListener('dragleave', function () {
+          this.classList.remove('drag-over');
+        });
+        cell.addEventListener('drop', function (e) {
+          e.preventDefault(); this.classList.remove('drag-over');
+          var mi = parseInt(this.getAttribute('data-midx'));
+          var dd = parseInt(this.getAttribute('data-day'));
+          var files = Array.from(e.dataTransfer.files).filter(function (f) { return f.type.startsWith('image/'); });
+          if (files.length) { openPopup(mi, dd); setTimeout(function () { addPhotosToDay(files); }, 80); }
+        });
+
+        grid.appendChild(cell);
+      });
+
+      var endLine = document.createElement('div');
+      endLine.className = 'grid-end';
+      grid.appendChild(endLine);
+    }
+
+    // ── date popup ──
+    function openPopup(monthIdx, day) {
+      openDayKey = { monthIdx: monthIdx, day: day };
+      var k = makeKey(monthIdx, day);
+      if (!archiveData[k]) archiveData[k] = { items: [] };
+      // 옛날 포맷 변환
+      if (archiveData[k].photos && !archiveData[k].items) {
+        archiveData[k].items = archiveData[k].photos.map(function(src) { return {src: src, note: archiveData[k].note || ''}; });
+        delete archiveData[k].photos;
+        delete archiveData[k].note;
+      }
+      var mo = monthList[monthIdx];
+      document.getElementById('popup-title').textContent = day + ' ' + mo.name + ' ' + mo.year;
+      renderPopupPhotos(k);
+      document.getElementById('popup-bg').classList.add('open');
+    }
+
+    function renderPopupPhotos(k) {
+      var container = document.getElementById('popup-photos');
+      container.innerHTML = '';
+      var items = (archiveData[k] && archiveData[k].items) ? archiveData[k].items : [];
+      items.forEach(function (item, i) {
+        (function (index) {
+          var wrap = document.createElement('div');
+          wrap.className = 'pp-wrap';
+          wrap.innerHTML =
+            '<img src="' + item.src + '" />' +
+            '<button class="pp-del">×</button>' +
+            '<textarea class="pp-note" placeholder="Note pour cette photo...">' + (item.note || '') + '</textarea>';
+          // 메모 변경시 즉시 저장
+          wrap.querySelector('.pp-note').addEventListener('input', function () {
+            archiveData[k].items[index].note = this.value;
+          });
+          wrap.querySelector('.pp-del').addEventListener('click', function () {
+            archiveData[k].items.splice(index, 1);
+            renderPopupPhotos(k);
+            drawCalendar();
+            saveData();
+          });
+          container.appendChild(wrap);
+        })(i);
+      });
+    }
+
+    function addPhotosToDay(files) {
+      if (!openDayKey) return;
+      var k = makeKey(openDayKey.monthIdx, openDayKey.day);
+      if (!archiveData[k]) archiveData[k] = { items: [] };
+      // 혹시 옛날 포맷이면 변환
+      if (archiveData[k].photos && !archiveData[k].items) {
+        archiveData[k].items = archiveData[k].photos.map(function(src) { return {src: src, note: ''}; });
+        delete archiveData[k].photos;
+      }
+      files.forEach(function (file) {
+        var reader = new FileReader();
+        reader.onload = function (e) {
+          archiveData[k].items.push({ src: e.target.result, note: '' });
+          renderPopupPhotos(k);
+          drawCalendar();
+          saveData();
+        };
+        reader.readAsDataURL(file);
+      });
+    }
+
+    function closePopup() {
+      if (openDayKey) {
+        saveData();
+        drawCalendar();
+      }
+      document.getElementById('popup-bg').classList.remove('open');
+      openDayKey = null;
+    }
+
+    document.getElementById('popup-close').addEventListener('click', closePopup);
+    document.getElementById('popup-cancel').addEventListener('click', closePopup);
+    document.getElementById('popup-save').addEventListener('click', closePopup);
+
+    var popupDrop = document.getElementById('popup-drop');
+    popupDrop.addEventListener('click', function () { document.getElementById('popup-file-input').click(); });
+    popupDrop.addEventListener('dragover', function (e) { e.preventDefault(); this.classList.add('drag-over'); });
+    popupDrop.addEventListener('dragleave', function () { this.classList.remove('drag-over'); });
+    popupDrop.addEventListener('drop', function (e) {
+      e.preventDefault(); this.classList.remove('drag-over');
+      addPhotosToDay(Array.from(e.dataTransfer.files).filter(function (f) { return f.type.startsWith('image/'); }));
+    });
+    document.getElementById('popup-file-input').addEventListener('change', function (e) {
+      addPhotosToDay(Array.from(e.target.files)); e.target.value = '';
+    });
+
+    // ── galerie ──
+    function buildGalTabs() {
+      var nav = document.getElementById('gal-tabs');
+      nav.innerHTML = '';
+      // 12개 탭 전부 표시
+      for (var i = 0; i < 12; i++) {
+        var tab = document.createElement('button');
+        tab.className = 'tab-item' + (i === galMonthIdx ? ' on' : '');
+        tab.textContent = monthList[i].name.toUpperCase().slice(0, 4);
+        tab.style.background = (i === galMonthIdx)
+          ? document.getElementById('c-bg').value
+          : document.getElementById('c-tab').value;
+        tab.setAttribute('data-i', i);
+        tab.onclick = function () {
+          galMonthIdx = parseInt(this.getAttribute('data-i'));
+          buildGalTabs();
+          drawGallery();
+        };
+        nav.appendChild(tab);
+      }
+      document.getElementById('gal-label').textContent = monthList[galMonthIdx].name + ' ' + monthList[galMonthIdx].year;
+    }
+
+    function drawGallery() {
+      var grid = document.getElementById('gal-grid');
+      grid.className = 'gallery-grid' + (galViewMode === 'list' ? ' list-view' : '');
+      grid.innerHTML = '';
+
+      // collecte toutes les photos du mois
+      var allPhotos = [];
+      for (var day = 1; day <= monthList[galMonthIdx].totalDays; day++) {
+        var k = makeKey(galMonthIdx, day);
+        var dayItems = archiveData[k] && archiveData[k].items ? archiveData[k].items : [];
+        dayItems.forEach(function (item) {
+          allPhotos.push({ src: item.src, day: day, note: item.note || '' });
+        });
+      }
+
+      document.getElementById('gal-count').textContent = allPhotos.length > 0 ? allPhotos.length + ' photos' : '';
+
+      if (allPhotos.length === 0) {
+        var empty = document.createElement('div');
+        empty.className = 'empty-gallery';
+        empty.textContent = 'Aucune photo — ajoutez-en depuis le calendrier';
+        grid.appendChild(empty);
+        return;
+      }
+
+      allPhotos.forEach(function (photo) {
+        var card = document.createElement('div');
+        card.className = 'photo-card';
+
+        if (galViewMode === 'list') {
+          card.innerHTML =
+            '<img src="' + photo.src + '" alt="" />' +
+            '<div class="list-info">' +
+              '<div class="list-date">' + photo.day + ' ' + monthList[galMonthIdx].name + '</div>' +
+              '<div class="list-note">' + (photo.note || 'Sans note') + '</div>' +
+            '</div>';
+        } else {
+          card.innerHTML =
+            '<img src="' + photo.src + '" alt="" />' +
+            '<div class="pc-overlay"><span class="pc-date">' + photo.day + '.' + (galMonthIdx % 12 + 6) + '</span></div>';
+        }
+
+        card.onclick = function () {
+          openPopup(galMonthIdx, photo.day);
+        };
+
+        grid.appendChild(card);
+      });
+    }
+
+    // ajout photo depuis galerie
+    document.getElementById('btn-add-photo').addEventListener('click', function () {
+      document.getElementById('gal-file-input').click();
+    });
+    document.getElementById('gal-file-input').addEventListener('change', function (e) {
+      // ajout depuis galerie → jour 1 du mois (sélection date possible plus tard)
+      var files = Array.from(e.target.files).filter(function (f) { return f.type.startsWith('image/'); });
+      var k = makeKey(galMonthIdx, 1);
+      if (!archiveData[k]) archiveData[k] = { items: [] };
+      files.forEach(function (file) {
+        var reader = new FileReader();
+        reader.onload = function (ev) {
+          archiveData[k].items.push({ src: ev.target.result, note: '' });
+          saveData();
+          drawGallery();
+        };
+        reader.readAsDataURL(file);
+      });
+      e.target.value = '';
+    });
+
+    // ── 뷰 transition ──
+    document.getElementById('vsw-cal').addEventListener('click', function () {
+      currentView = 'cal';
+      this.classList.add('on');
+      document.getElementById('vsw-gal').classList.remove('on');
+      document.getElementById('cal-view').style.display = 'flex';
+      document.getElementById('gal-view').classList.remove('on');
+      // sync mois galerie → calendrier
+      galMonthIdx = currentMonthIdx;
+    });
+
+    document.getElementById('vsw-gal').addEventListener('click', function () {
+      currentView = 'gal';
+      this.classList.add('on');
+      document.getElementById('vsw-cal').classList.remove('on');
+      document.getElementById('cal-view').style.display = 'none';
+      document.getElementById('gal-view').classList.add('on');
+      // sync mois calendrier → galerie
+      galMonthIdx = currentMonthIdx;
+      buildGalTabs();
+      drawGallery();
+    });
+
+    // ── calendrier précédent/suivant ──
+    document.getElementById('cal-prev').addEventListener('click', function () {
+      if (currentMonthIdx > 0) { currentMonthIdx--; buildCalTabs(); drawCalendar(); }
+    });
+    document.getElementById('cal-next').addEventListener('click', function () {
+      if (currentMonthIdx < 11) { currentMonthIdx++; buildCalTabs(); drawCalendar(); }
+    });
+
+    // ── galerie 뷰 transition ──
+    document.getElementById('gvbtn-grid').addEventListener('click', function () {
+      galViewMode = 'grid';
+      this.classList.add('on');
+      document.getElementById('gvbtn-list').classList.remove('on');
+      drawGallery();
+    });
+    document.getElementById('gvbtn-list').addEventListener('click', function () {
+      galViewMode = 'list';
+      this.classList.add('on');
+      document.getElementById('gvbtn-grid').classList.remove('on');
+      drawGallery();
+    });
+
+    // ── couleur/police barre outils ──
+    function setVar(name, val) { document.documentElement.style.setProperty(name, val); }
+
+    // 기본 디자인 값
+    var DEFAULT_SETTINGS = {
+      bg:        '#ffffff',
+      tab:       '#cccccc',
+      text:      '#111111',
+      line:      '#cccccc',
+      font:      "'Outfit', sans-serif",
+      lineStyle: 'dotted',
+    };
+
+    // 디자인 초기화
+    function resetDesign() {
+      var s = DEFAULT_SETTINGS;
+      document.getElementById('c-bg').value    = s.bg;
+      document.getElementById('c-tab').value   = s.tab;
+      document.getElementById('c-text').value  = s.text;
+      document.getElementById('c-line').value  = s.line;
+      document.getElementById('sel-font').value      = s.font;
+      document.getElementById('sel-line').value      = s.lineStyle;
+
+      setVar('--bg',         s.bg);
+      setVar('--tab-on',     s.bg);
+      setVar('--tab-off',    s.tab);
+      setVar('--text',       s.text);
+      setVar('--text-mid',   s.text);
+      setVar('--line',       s.line);
+      setVar('--text-light', s.line);
+      setVar('--font',       s.font);
+      setVar('--line-style', s.lineStyle);
+
+      // localStorage에서 설정 삭제
+      localStorage.removeItem('archive-settings');
+      buildCalTabs();
+      buildGalTabs();
+      showToast('Design réinitialisé ✓');
+    }
+
+    document.getElementById('c-bg').addEventListener('input', function (e) {
+      setVar('--bg', e.target.value);
+      setVar('--tab-on', e.target.value);
+      buildCalTabs(); buildGalTabs();
+      saveSettings();
+    });
+    document.getElementById('c-tab').addEventListener('input', function (e) {
+      setVar('--tab-off', e.target.value);
+      buildCalTabs(); buildGalTabs();
+      saveSettings();
+    });
+    document.getElementById('c-text').addEventListener('input', function (e) {
+      setVar('--text', e.target.value);
+      setVar('--text-mid', e.target.value);
+      saveSettings();
+    });
+    document.getElementById('c-line').addEventListener('input', function (e) {
+      setVar('--line', e.target.value);
+      setVar('--text-light', e.target.value);
+      saveSettings();
+    });
+    document.getElementById('sel-font').addEventListener('change', function (e) {
+      setVar('--font', e.target.value);
+      saveSettings();
+    });
+    document.getElementById('sel-line').addEventListener('change', function (e) {
+      setVar('--line-style', e.target.value);
+      saveSettings();
+    });
+
+    // ── export / import ──
+    document.getElementById('btn-export').addEventListener('click', function () {
+      var json = JSON.stringify(archiveData, null, 2);
+      var blob = new Blob([json], { type: 'application/json' });
+      var url = URL.createObjectURL(blob);
+      var a = document.createElement('a');
+      a.href = url;
+      a.download = 'archive-backup-' + new Date().toISOString().slice(0, 10) + '.json';
+      a.click();
+      URL.revokeObjectURL(url);
+    });
+
+    document.getElementById('btn-import').addEventListener('click', function () {
+      document.getElementById('import-input').click();
+    });
+    document.getElementById('import-input').addEventListener('change', function (e) {
+      var file = e.target.files[0];
+      if (!file) return;
+      var reader = new FileReader();
+      reader.onload = function (ev) {
+        try {
+          var imported = JSON.parse(ev.target.result);
+          for (var k in imported) { archiveData[k] = imported[k]; }
+          saveData(); drawCalendar(); drawGallery();
+          showToast('Importé !');
+        } catch (err) { showToast('Erreur fichier'); }
+      };
+      reader.readAsText(file);
+      e.target.value = '';
+    });
+
+    // 리셋 버튼
+    document.getElementById('btn-reset-design').addEventListener('click', function () {
+      if (confirm('Réinitialiser le design ? (les données restent)')) {
+        resetDesign();
+      }
+    });
+
+    // initialisation !
+    loadData();
+    loadSettings();   // 저장된 디자인 설정 먼저 불러오기
+    buildCalTabs();
+    drawCalendar();
+  </script>
+
+</body>
+</html>
